@@ -83,28 +83,26 @@ public class LinkedList {
 	 */
 	public void add(int index, MemoryBlock block) {
 		//// Write your code here
-		if (index < 0 || index >= size) {
-			throw new IllegalArgumentException(
-					"index must be between 0 and size");
-		}
-		Node newNode = new Node(block);
-		if (index==0) {
-			newNode.next = this.first;
-			this.first = newNode;
-		}
-		if (size == 0) {
-			last = newNode; 
-		} else if (index == size){
-			this.last.next = newNode;
-			this.last = newNode;
-		}
-		else {
-			Node prev = getNode(index - 1);
-            newNode.next = prev.next;
-            prev.next = newNode;
-		}
+		if (index < 0 || index > size) {
+            throw new IllegalArgumentException("index must be between 0 and size");
+        }
 
-		size++;
+        Node newNode = new Node(block);
+
+        if (index == 0) {
+            addFirst(block);
+            if (size == 1) {
+                last = first;
+            }
+        } else if (index == size) {
+            addLast(block);
+        } else {
+            Node pre = getNode(index - 1);
+            newNode.next = pre.next;
+            pre.next = newNode;
+            size++;
+        }
+    
 	}
 
 	/**
@@ -194,25 +192,32 @@ public class LinkedList {
 	public void remove(Node node) {
 		//// Write your code here
 		 if (node == null || size == 0) {
-		return;
+            throw new NullPointerException();
 		}
-		int index =indexOf(node.block);
-		if (index == -1 ) {
-            throw new IllegalArgumentException("Node not found in the list");
-        }
-		if (index == 0) {
-		this.first = this.first.next;
+		if (node == first) {
+            first = first.next;
+            size--;
+            if (size == 0) {
+                last = null;
+            }
+            if (size == 1) {
+                last = first;
+            }
+        } else if (node == last) {
+            last=getNode(size-2);
+            getNode(size - 2).next = null;
+            size--;
+        } else {
+            System.out.println(toString());
+            MemoryBlock b1 = node.block;
+            int index = indexOf(b1);
+            if (index<0){
+                throw new IllegalArgumentException("index must be between 0 and size");
+            }
+            getNode(index-1).next = node.next;
+            size--;
+            System.out.println(toString());
 		}
-		if (index == (size-1)) {
-			getNode(index-1).next = null;
-			this.last = getNode(index-1);
-			
-		}
-		if (index>0 && index < size) {
-			getNode(index-1).next = node.next;
-		}
-		
-		size --;
 	}
 
 	/**
